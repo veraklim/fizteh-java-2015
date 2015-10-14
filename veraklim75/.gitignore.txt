@@ -1,4 +1,0 @@
-*.properties
-.DS_Store
- *.class
- *.jar
