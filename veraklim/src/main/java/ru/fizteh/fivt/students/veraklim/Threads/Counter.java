@@ -6,7 +6,6 @@ public class Counter {
 
     private static class CountThread extends Thread {
         private int Id, next_Id;
-
         @Override
         public void run() {
             while (true) {

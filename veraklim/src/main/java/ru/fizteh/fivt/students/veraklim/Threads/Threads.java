@@ -1,15 +1,16 @@
 package ru.fizteh.fivt.students.veraklim.Threads;
 
+import java.util.concurrent.CyclicBarrier;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import java.util.concurrent.CyclicBarrier;
 
 public class Threads {
     private CyclicBarrier barrier;
     private boolean flag = false;
     private int numberOfThreads;
+
     private List<CallingThread> listOfThreads;
 
     public class CallingThread extends Thread {
