@@ -3,7 +3,7 @@ package ru.fizteh.fivt.students.veraklim.TwitterStream;
 import twitter4j.*;
 import com.beust.jcommander.JCommander;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -50,18 +50,19 @@ public class TwitterStream {
         return query;
     }
 
-    public static void search(Parameters param) throws Exception {
+    public static List<Status> search(Parameters param) throws Exception {
         Twitter twitter = new TwitterFactory().getInstance();
         Query query = setQuery(param);
         QueryResult result;
         int limit = param.getLimit();
         int statusCount = 0;
+        List<Status> tweets = new ArrayList<>();
         do {
             result = twitter.search(query);
-            List<Status> tweets = result.getTweets();
-            for (Status status : tweets) {
+            for (Status status : result.getTweets()) {
                 if (status.isRetweet() && param.isHideRetweets())
                     continue;
+                tweets.add(status);
                 printTime(status);
                 printTweet(status, param.isHideRetweets());
                 statusCount++;
@@ -75,6 +76,7 @@ public class TwitterStream {
         if (statusCount == 0) {
             System.out.println("Подходящих твитов нет");
         }
+        return tweets;
     }
 
     public static FilterQuery setFilter(Parameters param) throws Exception{

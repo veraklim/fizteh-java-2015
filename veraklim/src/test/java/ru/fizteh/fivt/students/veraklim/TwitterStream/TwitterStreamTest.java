@@ -1,6 +1,6 @@
 package ru.fizteh.fivt.students.veraklim.TwitterStream;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -8,9 +8,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import twitter4j.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import org.mockito.ArgumentCaptor;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,32 +21,40 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class TwitterStreamTest {
     @Mock
-    private Twitter twitter;
+    twitter4j.TwitterStream twitterStream;
 
     @InjectMocks
-    private TwitterStream search;
+    TwitterStream stream;
     public static List<Status> statuses;
 
-    @Before
-    public void setUp() throws Exception {
-        QueryResult queryResult = mock(QueryResult.class);
-        when(queryResult.getTweets()).thenReturn(statuses);
-        when(queryResult.nextQuery()).thenReturn(null);
-        QueryResult emptyQueryResult = mock(QueryResult.class);
-        when(emptyQueryResult.getTweets()).thenReturn(new ArrayList());
-        when(queryResult.nextQuery()).thenReturn(null);
+    @BeforeClass
+    public static void loadSampleData() {
+        statuses = Twitter4jTestUtils.tweetsFromJson("/statuses.json");
     }
 
     @Test
-    public void simpleSetQueryTest() throws Exception {
+    public void streamResultTest() throws Exception {
+        ArgumentCaptor<StatusListener> statusListener = ArgumentCaptor.forClass(StatusListener.class);
+        doNothing().when(twitterStream).addListener((StatusListener) statusListener.capture());
+        doAnswer(i -> {
+            statuses.forEach(s -> statusListener.getValue().onStatus(s));
+            return null;
+        }).when(twitterStream).filter(any(FilterQuery.class));
+        List<Status> tweets = new ArrayList<>();
+
         Parameters param = new Parameters();
-        param.setQuery("cook");
+        param.setQuery("mipt");
         param.setStream(true);
-        param.setLimit(40);
-        param.setHideRetweets(true);
+        param.setLimit(100);
+        param.setHideRetweets(false);
         param.setHelp(false);
-        param.setPlace("Moscow");
-        Query query = search.setQuery(param);
-        assertEquals(query.getQuery(), "cook");
+        param.setPlace("");
+
+        stream.stream(param, tweets::add);
+        assertTrue(tweets.size() == 13);
+
+        verify(twitterStream).addListener((StatusListener) any(StatusAdapter.class));
+        verify(twitterStream).filter(any(FilterQuery.class));
     }
 }
+
