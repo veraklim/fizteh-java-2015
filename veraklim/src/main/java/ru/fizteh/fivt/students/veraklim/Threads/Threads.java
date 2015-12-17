@@ -44,7 +44,6 @@ public class Threads {
         listOfThreads = new ArrayList<CallingThread>();
         this.numberOfThreads = numberOfThreads;
         barrier = new CyclicBarrier(numberOfThreads + 1, new Runnable() {
-            @Override
             public void run() {
                 flag = true;
                 for (int i = 0; i < listOfThreads.size(); ++i) {

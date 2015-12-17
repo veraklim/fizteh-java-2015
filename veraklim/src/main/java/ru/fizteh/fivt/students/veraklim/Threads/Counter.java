@@ -1,6 +1,7 @@
 package ru.fizteh.fivt.students.veraklim.Threads;
 
 public class Counter {
+
     private static volatile int cur_Id;
     private static Object monitor = new Object();
 

@@ -73,7 +73,4 @@ public class BlockingQueue<T> {
             write_Lock.unlock();
         }
     }
-
-
-
 }
