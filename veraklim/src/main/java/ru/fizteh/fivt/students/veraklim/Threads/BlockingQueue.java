@@ -11,14 +11,14 @@ import java.util.Queue;
 
 
 public class BlockingQueue<T> {
-    private Queue<T> Queue;
+    private Queue<T> queue;
     private Lock lock = new ReentrantLock(true);
     private Condition notFull = lock.newCondition();
     private Condition notEmpty = lock.newCondition();
     private int maxSize;
 
     public BlockingQueue(int maxSize) {
-        Queue = new LinkedList<T>();
+        queue = new LinkedList<T>();
         this.maxSize = maxSize;
     }
 
@@ -27,7 +27,7 @@ public class BlockingQueue<T> {
             lock.lock();
             List<T> answer = new ArrayList<T>();
             for (int i = 0; i < n; ++i) {
-                while (Queue.size() == 0) {
+                while (queue.size() == 0) {
                     try {
                         notEmpty.await();
                     } catch (InterruptedException e) {
@@ -35,7 +35,7 @@ public class BlockingQueue<T> {
                     }
                 }
 
-                answer.add(Queue.poll());
+                answer.add(queue.poll());
                 notFull.signalAll();
             }
             return answer;
@@ -48,14 +48,14 @@ public class BlockingQueue<T> {
         try {
            lock.lock();
             for (T element : list) {
-                while (Queue.size() == maxSize) {
+                while (queue.size() == maxSize) {
                         try {
                             notFull.await();
                         } catch (InterruptedException e) {
                             return;
                         }
                     }
-                    Queue.add(element);
+                    queue.add(element);
                     notEmpty.signal();
             }
         } finally {
