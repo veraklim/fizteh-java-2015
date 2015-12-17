@@ -64,7 +64,7 @@ public class TwitterStream {
                     continue;
                 printTime(status);
                 printTweet(status, param.isHideRetweets());
-                statusCount++;
+                statusCount+  ;
                 limit--;
                 if (limit == 0) {
                     break;
