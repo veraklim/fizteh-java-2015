@@ -43,16 +43,11 @@ public class Threads {
     public Threads(int numberOfThreads) {
         listOfThreads = new ArrayList<CallingThread>();
         this.numberOfThreads = numberOfThreads;
-        barrier = new CyclicBarrier(numberOfThreads + 1, new Runnable() {
-            public void run() {
+        barrier = new CyclicBarrier(numberOfThreads + 1, () -> {
                 flag = true;
-                for (CallingThread answeringThread : listOfThreads) {
-                    flag &= answeringThread.callingResult;
+                for (CallingThread callThread : listOfThreads) {
+                    flag &= callThread.callingResult;
                 }
-                if (!flag) {
-                    System.out.println("Are you ready?");
-                }
-            }
         });
     }
     public void start() {
