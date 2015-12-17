@@ -46,9 +46,8 @@ public class Threads {
             @Override
             public void run() {
                 flag = true;
-                for (int i = 0; i < listOfThreads.size(); ++i) {
-                    flag &= listOfThreads.get(i).callingResult;
-                    listOfThreads.get(i);
+                for (CallingThread answeringThread : listOfThreads) {
+                    flag &= answeringThread.callingResult;
                 }
                 if (!flag) {
                     System.out.println("Are you ready?");

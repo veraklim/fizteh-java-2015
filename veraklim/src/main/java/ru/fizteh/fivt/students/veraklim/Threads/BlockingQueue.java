@@ -11,69 +11,54 @@ import java.util.Queue;
 
 
 public class BlockingQueue<T> {
-    private Queue<T> Queue;
-    private Lock write_Lock = new ReentrantLock(true);
-    private Lock read_Lock = new ReentrantLock(true);
-    private Lock Lock = new ReentrantLock(true);
-    private Condition not_Full = Lock.newCondition();
-    private Condition not_Empty = Lock.newCondition();
+    private Queue<T> queue;
+    private Lock lock = new ReentrantLock(true);
+    private Condition notFull = lock.newCondition();
+    private Condition notEmpty = lock.newCondition();
     private int maxSize;
 
     public BlockingQueue(int maxSize) {
-        Queue = new LinkedList<T>();
+        queue = new LinkedList<T>();
         this.maxSize = maxSize;
     }
 
     public List<T> take(int n) {
         try {
-            read_Lock.lock();
+            lock.lock();
             List<T> answer = new ArrayList<T>();
             for (int i = 0; i < n; ++i) {
-                try {
-                    Lock.lock();
-                    while (Queue.size() == 0) {
+                while (queue.size() == 0) {
                         try {
-                            not_Empty.await();
+                            notEmpty.await();
                         } catch (InterruptedException e) {
                             return null;
                         }
                     }
-                    answer.add(Queue.poll());
-                    not_Full.signalAll();
-                } finally {
-                    Lock.unlock();
-                }
+                answer.add(queue.poll());
+                notFull.signalAll();
             }
             return answer;
         } finally {
-            read_Lock.unlock();
+            lock.unlock();
         }
     }
 
     public void offer(List<T> list) {
         try {
-            write_Lock.lock();
+           lock.lock();
             for (T element : list) {
-                try {
-                    Lock.lock();
-                    while (Queue.size() == maxSize) {
+                while (queue.size() == maxSize) {
                         try {
-                            not_Full.await();
+                            notFull.await();
                         } catch (InterruptedException e) {
                             return;
                         }
                     }
-                    Queue.add(element);
-                    not_Empty.signal();
-                } finally {
-                    Lock.unlock();
-                }
+                queue.add(element);
+                notEmpty.signal();
             }
         } finally {
-            write_Lock.unlock();
+           lock.unlock();
         }
     }
-
-
-
 }
