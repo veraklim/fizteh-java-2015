@@ -2,8 +2,9 @@ package ru.fizteh.fivt.students.veraklim.Threads;
 
 public class Counter {
 
-    private static volatile int cur_Id;
     private static Object monitor = new Object();
+    private static volatile int cur_Id;
+
 
     private static class CountThread extends Thread {
         private int Id, next_Id;
@@ -29,6 +30,7 @@ public class Counter {
             this.next_Id = next_id;
         }
     }
+
     public static void main(String[] args) {
         int n = 0;
         try {

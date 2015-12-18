@@ -12,10 +12,11 @@ import java.util.Queue;
 
 public class BlockingQueue<T> {
     private Queue<T> queue;
+    private int maxSize;
     private Lock lock = new ReentrantLock(true);
     private Condition notFull = lock.newCondition();
     private Condition notEmpty = lock.newCondition();
-    private int maxSize;
+
 
     public BlockingQueue(int maxSize) {
         queue = new LinkedList<T>();
@@ -43,7 +44,6 @@ public class BlockingQueue<T> {
             lock.unlock();
         }
     }
-
     public void offer(List<T> list) {
         try {
            lock.lock();

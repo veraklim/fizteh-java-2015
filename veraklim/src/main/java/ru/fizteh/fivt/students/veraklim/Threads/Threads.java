@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class Threads {
     private CyclicBarrier barrier;
-    private boolean flag = false;
     private int numberOfThreads;
+    private boolean flag = false;
 
     private List<CallingThread> listOfThreads;
 
@@ -22,7 +22,6 @@ public class Threads {
         public CallingThread(Threads callingCommander) {
             this.commander = callingCommander;
         }
-
         @Override
         public void run() {
             while (!commander.flag) {
@@ -63,6 +62,7 @@ public class Threads {
             }
         }
     }
+
     public static void main(String[] args) {
         int numberOfThreads = 0;
         try {
